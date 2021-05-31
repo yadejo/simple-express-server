@@ -27,14 +27,17 @@ steps:
     archiveType: zip
     archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
     replaceExistingArchive: true
+- upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+  artifact: drop
 
 - task: AzureRmWebAppDeployment@4
   inputs:
+    
     ConnectionType: 'AzureRM'
     azureSubscription: 'Visual Studio Enterprise Subscription – MPN(0249c9fe-9eb6-46ca-9019-eb9d22c21d71)'
     appType: 'webAppLinux'
     WebAppName: 'simple-express-server'
-    packageForLinux: '$(System.ArtifactStagingDirectory)/**/*.zip'
+    packageForLinux: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
     RuntimeStack: 'NODE|14-lts'
     StartupCommand: 'npm run start'
 
